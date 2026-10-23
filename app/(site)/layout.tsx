@@ -4,6 +4,7 @@ import { MobileMenu } from "@/components/site/MobileMenu";
 import { NavLinks } from "@/components/site/NavLinks";
 import { THEME_SCRIPT, ThemeToggle } from "@/components/site/ThemeToggle";
 import { DAY_LINKS, MAIN_NAV, TIP_LINKS, WEEKDAY_LINKS } from "@/components/site/nav";
+import { dbSetupHint } from "@/lib/db";
 import { siteSettings } from "@/lib/settings";
 
 const QUICK_LINKS = [
@@ -15,7 +16,12 @@ const QUICK_LINKS = [
 ];
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const site = await siteSettings().catch(() => null);
+  let setupHint: string | null = null;
+  const site = await siteSettings().catch((e) => {
+    console.error("Database check failed:", e);
+    setupHint = dbSetupHint(e);
+    return null;
+  });
   return (
     <div className="site flex min-h-screen flex-col">
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
@@ -34,7 +40,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <div className="bg-gold px-4 py-2 text-center text-sm font-semibold text-[#060b16]">{site.announcement}</div>
       )}
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">{setupHint ? <SetupNotice hint={setupHint} /> : children}</main>
 
       <footer className="relative mt-14 overflow-hidden bg-navy text-white/75">
         <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-solid via-gold to-brand-solid" />
@@ -90,6 +96,17 @@ function FooterCol({ title, links }: { title: string; links: { href: string; lab
       <ul className="space-y-2.5 text-sm">
         {links.map((l) => <li key={l.href}><Link href={l.href} className="transition hover:text-brand-solid">{l.label}</Link></li>)}
       </ul>
+    </div>
+  );
+}
+
+/** Shown instead of the page when the database isn't reachable, so the cause is visible even in production builds. */
+function SetupNotice({ hint }: { hint: string }) {
+  return (
+    <div className="s-card mx-auto max-w-xl p-8 text-center">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-loss/10 text-loss"><Icon name="alert" size={26} /></span>
+      <h1 className="mt-3 font-display text-2xl font-bold tracking-wide text-fg uppercase">Database not connected</h1>
+      <p className="mt-2 text-sm leading-relaxed text-subtle">{hint}</p>
     </div>
   );
 }

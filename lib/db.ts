@@ -63,3 +63,18 @@ async function seedCompetitions(p: Pool) {
       c.map((x) => x.type), c.map((x) => Boolean(x.isNational)), c.map((x) => Boolean(x.neutral)), c.map((x) => x.priority)],
   );
 }
+
+/**
+ * Turns a connection failure into a setup hint that is safe to show publicly (no hosts or credentials).
+ * Returns null when the error isn't a connection/configuration problem.
+ */
+export function dbSetupHint(e: unknown): string | null {
+  const msg = e instanceof Error ? `${e.message} ${(e as { code?: string }).code ?? ""}` : String(e);
+  if (/DATABASE_URL is not set/.test(msg)) return "DATABASE_URL is not set for this deployment. Add your Postgres / Supabase connection string to the environment variables and redeploy.";
+  if (/ENOTFOUND|EAI_AGAIN|ENETUNREACH|EHOSTUNREACH|getaddrinfo/.test(msg))
+    return "The database host can't be reached. On Supabase, use the Transaction pooler connection string (port 6543): the direct db.<project>.supabase.co host is IPv6-only and Vercel can't reach it.";
+  if (/password authentication|28P01|Tenant or user not found|XX000/.test(msg)) return "The database rejected the username or password in DATABASE_URL. Copy the connection string again and check the password.";
+  if (/ECONNREFUSED|ETIMEDOUT|timeout|Connection terminated/i.test(msg)) return "The database refused or timed out the connection. Check the host and port in DATABASE_URL and that the database is running.";
+  if (/self[- ]signed|certificate|SSL/i.test(msg)) return "The database SSL handshake failed. Check the sslmode in DATABASE_URL.";
+  return null;
+}
