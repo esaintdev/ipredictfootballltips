@@ -17,7 +17,7 @@ export default function About() {
           early-season and newly-promoted sides don&apos;t produce wild numbers. Home advantage is estimated from the data, and tournament matches at
           neutral venues are treated as neutral.
         </p>
-        <h2>2. Expected goals → every scoreline</h2>
+        <h2>2. From expected goals to every scoreline</h2>
         <p>
           Combining the two teams&apos; ratings gives the expected goals for each side. From those we compute the probability of every scoreline from 0-0
           to 10-10 using a Poisson model with the Dixon-Coles correction, which fixes the classic under-estimation of 0-0, 1-0, 0-1 and 1-1 results.

@@ -24,7 +24,7 @@ export default async function AccuracyPage() {
       <div className="compat mt-8 space-y-12">
 
       <section>
-        <h2 className="mb-4 text-2xl font-extrabold tracking-tight text-white">Live track record</h2>
+        <h2 className="mb-4 s-h2">Live track record</h2>
         {all.overall.n === 0 ? (
           <div className="card p-6 text-sm text-muted">Live grading starts as soon as the first published predictions are played.</div>
         ) : (
@@ -51,7 +51,7 @@ export default async function AccuracyPage() {
       </section>
 
       <section>
-        <h2 className="mb-1 text-2xl font-extrabold tracking-tight text-white">Backtest: recent seasons</h2>
+        <h2 className="mb-1 s-h2">Backtest: recent seasons</h2>
         <p className="mb-4 text-sm text-muted">
           {latest[0]
             ? `${latest[0].label} · run ${new Date(latest[0].finished_at).toUTCString()}`

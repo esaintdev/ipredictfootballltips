@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Icon } from "./icons";
 
 /** Runs before paint (see SiteLayout) so the saved theme never flashes. */
 export const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`;
@@ -17,8 +18,8 @@ export function ThemeToggle() {
   };
   return (
     <button onClick={toggle} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg text-white transition hover:bg-white/20">
-      <span aria-hidden>{dark ? "☀" : "☾"}</span>
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20">
+      <Icon name={dark ? "sun" : "moon"} size={18} />
     </button>
   );
 }

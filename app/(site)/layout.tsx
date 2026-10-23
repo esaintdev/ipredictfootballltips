@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { Icon, LogoMark } from "@/components/site/icons";
 import { MobileMenu } from "@/components/site/MobileMenu";
 import { NavLinks } from "@/components/site/NavLinks";
 import { THEME_SCRIPT, ThemeToggle } from "@/components/site/ThemeToggle";
@@ -19,9 +19,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <div className="site flex min-h-screen flex-col">
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-      <header className="sticky top-0 z-40 bg-navy shadow-lg shadow-black/10">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-navy/95 shadow-lg shadow-black/10 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-          <Logo />
+          <SiteLogo name={site?.siteName} />
           <NavLinks main={MAIN_NAV} tips={TIP_LINKS} />
           <div className="flex items-center gap-1">
             <ThemeToggle />
@@ -36,28 +36,34 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:py-8">{children}</main>
 
-      <footer className="mt-12 bg-navy text-white/80">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-12 md:grid-cols-3 lg:grid-cols-5">
-          <FooterCol title="Quick Links" links={QUICK_LINKS} />
-          <FooterCol title="Predictions" links={[...DAY_LINKS, { href: "/all-predictions", label: "All Predictions" }, { href: "/banker-of-the-day", label: "Banker of the Day" }]} />
-          <FooterCol title="Prediction By Days" links={WEEKDAY_LINKS} />
-          <FooterCol title="Football Tips" links={TIP_LINKS.slice(3, 10)} />
-          <div className="col-span-2 md:col-span-1">
-            <h3 className="mb-4 font-bold text-white">About Us</h3>
-            <p className="text-sm leading-relaxed text-white/70">
-              {site?.siteName ?? "iPredictFootballTips"} publishes free, statistical football predictions from a Dixon-Coles Poisson model,
-              refreshed daily and graded in public.
+      <footer className="relative mt-14 overflow-hidden bg-navy text-white/75">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-solid via-gold to-brand-solid" />
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 pt-14 pb-10 md:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1">
+            <SiteLogo name={site?.siteName} />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
+              Free, statistical football predictions from a Dixon-Coles Poisson model, refreshed daily and graded in public.
             </p>
-            <Link href="/accuracy" className="mt-3 inline-block text-sm font-semibold text-brand-solid hover:underline">See our track record →</Link>
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 text-white/80 ring-1 ring-white/10"><Icon name="shield" size={14} className="text-brand-solid" />Backtested model</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 text-white/80 ring-1 ring-white/10"><Icon name="check" size={14} className="text-brand-solid" />Every tip graded</span>
+            </div>
+            <Link href="/accuracy" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-solid hover:underline">See our track record<Icon name="chevronRight" size={16} /></Link>
           </div>
+          <FooterCol title="Quick Links" links={QUICK_LINKS} />
+          <FooterCol title="Predictions" links={[...DAY_LINKS.map((l) => ({ ...l, label: l.label.replace(/Football Predictions for (the )?/, "") })), { href: "/all-predictions", label: "All Predictions" }, { href: "/banker-of-the-day", label: "Banker of the Day" }]} />
+          <FooterCol title="By Day" links={WEEKDAY_LINKS.map((l) => ({ ...l, label: l.label.replace(" Football Predictions", "") }))} />
+          <FooterCol title="Football Tips" links={TIP_LINKS.slice(3, 10)} />
         </div>
         <div className="mx-auto max-w-6xl px-4 pb-8">
-          <div className="rounded-xl bg-gradient-to-r from-loss to-[#b42328] px-4 py-3 text-center text-sm text-white">
-            <b>18+</b> · You must be 18 years old or over to use this site. Predictions are probabilities, not guarantees.{" "}
-            <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" className="font-semibold underline">Please play responsibly</a>
+          <div className="flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-loss to-[#b42328] px-4 py-3 text-center text-sm text-white">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white font-extrabold text-loss">18+</span>
+            <span>You must be 18 or over to use this site. Predictions are probabilities, not guarantees.{" "}
+              <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" className="font-semibold underline">Please play responsibly</a></span>
           </div>
-          <div className="mt-6 border-t border-white/10 pt-6 text-center text-sm text-gold">
-            © {new Date().getFullYear()} {site?.siteName ?? "iPredictFootballTips"}. All rights reserved.
+          <div className="mt-6 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-sm sm:flex-row">
+            <span className="text-gold">© {new Date().getFullYear()} {site?.siteName ?? "iPredictFootballTips"}. All rights reserved.</span>
+            <span className="text-white/40">Fair odds = 1 / model probability. No bookmaker margin.</span>
           </div>
         </div>
       </footer>
@@ -65,12 +71,24 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   );
 }
 
+function SiteLogo({ name = "iPredictFootballTips" }: { name?: string }) {
+  const m = /^(i?Predict)(Football)(.*)$/.exec(name);
+  return (
+    <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label={`${name} home`}>
+      <LogoMark size={36} />
+      <span className="font-display text-[1.35rem] leading-none font-bold tracking-wide text-white sm:text-[1.5rem]">
+        {m ? <>{m[1]}<span className="text-brand-solid">{m[2]}</span>{m[3]}</> : name}
+      </span>
+    </Link>
+  );
+}
+
 function FooterCol({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
     <div>
-      <h3 className="mb-4 font-bold text-white">{title}</h3>
+      <h3 className="mb-4 font-display text-lg font-bold tracking-wide text-white uppercase">{title}</h3>
       <ul className="space-y-2.5 text-sm">
-        {links.map((l) => <li key={l.href}><Link href={l.href} className="hover:text-brand-solid">{l.label}</Link></li>)}
+        {links.map((l) => <li key={l.href}><Link href={l.href} className="transition hover:text-brand-solid">{l.label}</Link></li>)}
       </ul>
     </div>
   );

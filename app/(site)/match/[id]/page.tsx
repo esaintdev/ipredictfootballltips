@@ -95,14 +95,14 @@ export default async function MatchPage({ params }: Props) {
           )}
 
           <section className="s-card p-4 sm:p-6">
-            <h2 className="mb-3 text-xl font-extrabold text-fg">All tips for this match</h2>
+            <h2 className="mb-3 font-display text-2xl font-bold tracking-wide text-fg uppercase">All tips for this match</h2>
             <div className="divide-y divide-edge/70 text-sm">
               <div className="grid grid-cols-[minmax(0,1fr)_4rem_5rem] gap-2 pb-2 text-xs font-semibold text-subtle sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_4rem_5rem]">
                 <span>Tip</span><span className="hidden sm:block">Probability</span><span className="text-center">Odds</span><span className="text-center">{finished ? "Result" : "Confidence"}</span>
               </div>
               {candidates(m).sort((a, b) => b.p - a.p).map((t) => (
                 <div key={t.code} className="grid grid-cols-[minmax(0,1fr)_4rem_5rem] items-center gap-2 py-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_4rem_5rem]">
-                  <span className="truncate font-semibold text-fg"><b className="mr-2 inline-block w-16">{t.code}</b><span className="font-normal text-subtle">{t.label}</span></span>
+                  <span className="truncate font-semibold text-fg"><b className="mr-2 inline-block w-20">{t.code}</b><span className="font-normal text-subtle">{t.label}</span></span>
                   <span className="hidden sm:block"><Meter value={t.p} /></span>
                   <span className="text-center font-bold text-accent">{fairOdds(t.p).toFixed(2)}</span>
                   <span className="text-center">{finished ? <ResultBadge won={grade(t)} /> : <ConfidenceBadge p={t.p} />}</span>
@@ -113,7 +113,7 @@ export default async function MatchPage({ params }: Props) {
 
           <section className="grid gap-6 lg:grid-cols-2">
             <div className="s-card p-5">
-              <h2 className="mb-4 text-xl font-extrabold text-fg">Goal lines</h2>
+              <h2 className="mb-4 font-display text-2xl font-bold tracking-wide text-fg uppercase">Goal lines</h2>
               <table className="w-full text-sm">
                 <thead><tr className="border-b border-edge text-xs text-subtle"><th className="py-2 text-left font-medium">Line</th><th className="text-left font-medium">Over</th><th className="text-left font-medium">Under</th></tr></thead>
                 <tbody>
@@ -128,7 +128,7 @@ export default async function MatchPage({ params }: Props) {
               </table>
             </div>
             <div className="s-card p-5">
-              <h2 className="mb-1 text-xl font-extrabold text-fg">Correct score probabilities</h2>
+              <h2 className="mb-1 font-display text-2xl font-bold tracking-wide text-fg uppercase">Correct score probabilities</h2>
               <p className="mb-4 text-xs text-subtle">Rows: {m.home_name} goals · Columns: {m.away_name} goals</p>
               <div className="overflow-x-auto">
                 <table className="mx-auto text-center text-xs">
@@ -168,7 +168,7 @@ function TeamHead({ name, logo }: { name: string; logo: string | null }) {
   return (
     <div className="flex flex-col items-center gap-2 text-center">
       <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white p-3"><TeamLogo src={logo} name={name} size={56} /></span>
-      <span className="text-base font-bold sm:text-lg">{name}</span>
+      <span className="font-display text-xl font-bold tracking-wide uppercase sm:text-2xl">{name}</span>
     </div>
   );
 }
@@ -176,7 +176,7 @@ function TeamHead({ name, logo }: { name: string; logo: string | null }) {
 function FormList({ title, rows, teamId }: { title: string; rows: MatchRow[]; teamId?: number }) {
   return (
     <div className="s-card p-5">
-      <h2 className="mb-3 font-extrabold text-fg">{title}</h2>
+      <h2 className="mb-3 font-display text-xl font-bold tracking-wide text-fg uppercase">{title}</h2>
       {rows.length === 0 && <p className="text-sm text-subtle">No recent matches in our database.</p>}
       <ul className="space-y-2">
         {rows.map((r) => {

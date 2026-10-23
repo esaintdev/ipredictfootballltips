@@ -2,6 +2,7 @@
 
 import { Children, useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "./icons";
 
 /** Shows `step` children at a time with a "Load more" button. */
 export function LoadMore({ children, step = 25 }: { children: ReactNode; step?: number }) {
@@ -12,7 +13,7 @@ export function LoadMore({ children, step = 25 }: { children: ReactNode; step?: 
       {all.slice(0, n)}
       {n < all.length && (
         <div className="flex justify-center py-4">
-          <button onClick={() => setN(n + step)} className="s-btn s-btn-outline">Load more <span aria-hidden>▾</span></button>
+          <button onClick={() => setN(n + step)} className="s-btn s-btn-outline">Load more <Icon name="chevronDown" size={16} /></button>
         </div>
       )}
     </>
@@ -33,8 +34,8 @@ export function Scroller({ children, className = "" }: { children: ReactNode; cl
 export function DatePicker({ value, base }: { value: string; base: string }) {
   const router = useRouter();
   return (
-    <label className="relative flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-dashed border-edge text-subtle hover:border-accent hover:text-accent" title="Pick a date">
-      <span aria-hidden>📅</span>
+    <label className="relative flex h-14 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-dashed border-edge text-subtle hover:border-accent hover:text-accent" title="Pick a date">
+      <Icon name="calendar" size={20} />
       <span className="sr-only">Pick a date</span>
       <input type="date" value={value} onChange={(e) => e.target.value && router.push(`${base}date=${e.target.value}`)}
         className="absolute inset-0 cursor-pointer opacity-0" />
@@ -52,9 +53,9 @@ export function Carousel({ children }: { children: ReactNode }) {
     <div>
       {slides.length > 1 && (
         <div className="mb-3 flex items-center justify-between">
-          <button onClick={() => go(-1)} aria-label="Previous" className="flex h-9 w-9 items-center justify-center rounded-full border border-edge hover:border-accent">‹</button>
+          <button onClick={() => go(-1)} aria-label="Previous" className="flex h-9 w-9 items-center justify-center rounded-full border border-edge hover:border-accent"><Icon name="chevronLeft" size={16} /></button>
           <div className="flex gap-2">{slides.map((_, k) => <button key={k} onClick={() => setI(k)} aria-label={`Slide ${k + 1}`} className={`h-2 w-2 rounded-full ${k === i ? "bg-fg" : "bg-edge"}`} />)}</div>
-          <button onClick={() => go(1)} aria-label="Next" className="flex h-9 w-9 items-center justify-center rounded-full border border-edge hover:border-accent">›</button>
+          <button onClick={() => go(1)} aria-label="Next" className="flex h-9 w-9 items-center justify-center rounded-full border border-edge hover:border-accent"><Icon name="chevronRight" size={16} /></button>
         </div>
       )}
       {slides[i]}

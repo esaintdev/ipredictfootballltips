@@ -15,7 +15,7 @@
   --color-loss: #f05252;
 
   /* Public site palette (light by default, dark via [data-theme="dark"]) */
-  --color-canvas: #f2f4f8;
+  --color-canvas: #eef1f6;
   --color-surface: #ffffff;
   --color-surface-2: #f4f6fa;
   --color-edge: #e2e7ef;
@@ -28,6 +28,7 @@
   --color-navy-2: #121c31;
   --color-brand-solid: #12d18e;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, sans-serif;
 }
 
 html { color-scheme: dark; }
@@ -87,17 +88,20 @@ body:has(.site) { background: var(--color-canvas); background-image: none; }
 .site .text-ink { color: #060b16; }
 
 @layer components {
-  .s-card { @apply rounded-2xl border border-edge bg-surface; }
-  .s-pill { @apply inline-flex shrink-0 items-center justify-center rounded-full border border-edge bg-surface-2 px-4 py-2 text-sm font-semibold text-subtle transition hover:border-accent/50 hover:text-fg; }
-  .s-pill-active { @apply border-navy bg-navy text-white hover:text-white; }
+  .s-card { @apply rounded-2xl border border-edge bg-surface shadow-[0_1px_2px_rgba(10,17,32,0.04),0_10px_30px_-18px_rgba(10,17,32,0.25)]; }
+  .s-h2 { @apply font-display text-[1.75rem] leading-none font-bold tracking-wide text-fg uppercase sm:text-[2.1rem]; }
+  .s-eyebrow { @apply text-[11px] font-bold tracking-[0.14em] text-accent uppercase; }
+  .s-pill { @apply inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-edge bg-surface px-3.5 py-2 text-[13px] font-semibold text-subtle transition hover:border-accent/60 hover:text-fg; }
+  .s-pill-active { @apply border-navy bg-navy text-white shadow-sm hover:border-navy hover:text-white dark:border-accent dark:bg-accent dark:text-[#060b16]; }
   .s-btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition; }
   .s-btn-primary { @apply bg-brand-solid text-[#060b16] hover:brightness-95; }
   .s-btn-outline { @apply border border-edge bg-surface text-fg hover:border-accent/60; }
   .s-btn-gold { @apply bg-gold text-[#060b16] hover:brightness-95; }
-  .s-prose h2 { @apply mt-8 mb-3 text-2xl font-extrabold tracking-tight text-accent; }
+  .s-btn-navy { @apply bg-navy text-white hover:brightness-125; }
+  .s-prose h2 { @apply mt-10 mb-3 border-l-4 border-brand-solid pl-3 font-display text-[1.65rem] leading-tight font-bold tracking-wide text-fg uppercase; }
   .s-prose h3 { @apply mt-6 mb-2 text-lg font-bold text-fg; }
-  .s-prose p { @apply mb-4 leading-relaxed; }
-  .s-prose ul { @apply mb-4 list-disc space-y-1 pl-6; }
-  .s-prose a { @apply font-semibold text-accent underline underline-offset-2; }
+  .s-prose p { @apply mb-4 leading-relaxed text-fg/80; }
+  .s-prose ul { @apply mb-4 list-disc space-y-1 pl-6 text-fg/80; }
+  .s-prose a { @apply font-semibold text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent; }
 }
 .no-scrollbar { scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; }

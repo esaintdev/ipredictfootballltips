@@ -24,7 +24,7 @@ export default async function LeaguesPage() {
         if (!list.length) return null;
         return (
           <section key={s.key} className="s-card mt-6 p-4 sm:p-6">
-            <h2 className="mb-4 text-2xl font-extrabold tracking-tight text-fg">{s.title}</h2>
+            <h2 className="s-h2 mb-5">{s.title}</h2>
             <div className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
               {list.map((c) => (
                 <Link key={c.id} href={`/leagues/${c.slug}`} className="flex items-center gap-3 border-b border-edge/70 py-3 hover:text-accent">

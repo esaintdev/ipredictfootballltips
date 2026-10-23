@@ -2,12 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { predictionsForDay, predictionsForDays } from "@/lib/queries";
-import { categoryBySlug, comboOdds, fairOdds, tipsFor, type Category } from "@/lib/tips";
+import { categoryBySlug, comboOdds, fairOdds, tipsFor, type Category, type TipRow } from "@/lib/tips";
 import { addDays, longDate, todayIso, validDate } from "@/components/site/blocks";
-import { ConfidenceBadge } from "@/components/site/blocks";
 import { TipsPage } from "@/components/site/TipsPage";
 import { WEEKDAYS } from "@/components/site/nav";
-import { LocalTime, TeamLogo } from "@/components/ui";
+import { LocalTime, TeamLogo, pct } from "@/components/ui";
+import { Icon } from "@/components/site/icons";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ date?: string }> };
 
@@ -48,7 +48,8 @@ export default async function SlugPage({ params, searchParams }: Props) {
     <TipsPage
       title={d.title}
       intro={`Every match we cover on ${label}, with the model's best tip, fair odds and confidence.`}
-      boardTitle={<>{d.title.replace("Football ", "")}<span className="mt-1 block text-sm font-medium text-subtle">{label}</span></>}
+      boardTitle={d.title.replace("Football ", "")}
+      boardSub={label}
       category="all"
       rows={rows}
       base={`/${slug}`}
@@ -69,37 +70,71 @@ async function CategoryPage({ c, date: picked }: { c: Category; date?: string })
       title={c.title}
       intro={c.intro}
       boardTitle={c.title}
+      boardSub={longDate(date)}
       category={c.id}
       rows={tips}
       date={date}
       base={`/${c.slug}`}
       tabDate={isToday ? undefined : date}
       copy={c.id}
-      before={banker && (
-        <Link href={`/match/${banker.m.id}`} className="mt-6 block overflow-hidden rounded-3xl bg-navy p-6 text-white shadow-lg transition hover:brightness-110 sm:p-8">
-          <div className="flex items-center justify-between gap-3">
-            <span className="rounded-full bg-gold px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#060b16]">Banker of the day</span>
-            <span className="text-sm text-white/70"><LocalTime iso={banker.m.kickoff} mode="datetime" /></span>
-          </div>
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-center">
-            <span className="flex flex-col items-center gap-2"><TeamLogo src={banker.m.home_logo} name={banker.m.home_name} size={52} /><b className="text-sm sm:text-lg">{banker.m.home_name}</b></span>
-            <span className="text-sm font-bold text-white/60">VS</span>
-            <span className="flex flex-col items-center gap-2"><TeamLogo src={banker.m.away_logo} name={banker.m.away_name} size={52} /><b className="text-sm sm:text-lg">{banker.m.away_name}</b></span>
-          </div>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
-            <span className="rounded-xl bg-white/10 px-4 py-2">Tip <b className="ml-1 text-brand-solid">{banker.tip.label}</b></span>
-            <span className="rounded-xl bg-white/10 px-4 py-2">Fair odds <b className="ml-1">{fairOdds(banker.tip.p).toFixed(2)}</b></span>
-            <ConfidenceBadge p={banker.tip.p} />
-          </div>
-          <div className="mt-3 text-center text-xs text-white/60">{banker.m.comp_name}</div>
-        </Link>
-      )}
+      before={banker && <BankerCard r={banker} />}
       footer={c.id === "two-odds" && tips.length ? (
         <>
-          <span className="rounded-xl bg-navy px-4 py-2.5 text-sm font-bold text-white">{tips.length}-fold · combined fair odds <span className="text-brand-solid">{comboOdds(tips).toFixed(2)}</span></span>
-          <Link href="/all-predictions" className="s-btn s-btn-outline sm:ml-auto">View all matches ›</Link>
+          <span className="inline-flex items-center gap-3 rounded-xl bg-navy px-4 py-2.5 text-sm font-semibold text-white">
+            <Icon name="layers" size={18} className="text-brand-solid" />{tips.length}-fold accumulator
+            <span className="font-display text-2xl leading-none font-bold text-brand-solid">{comboOdds(tips).toFixed(2)}</span>
+          </span>
+          <Link href="/all-predictions" className="s-btn s-btn-outline sm:ml-auto">View all matches<Icon name="chevronRight" size={16} /></Link>
         </>
       ) : undefined}
     />
+  );
+}
+
+/** Feature card for the day's banker, styled like a match-day poster. */
+function BankerCard({ r }: { r: TipRow }) {
+  const { m, tip } = r;
+  return (
+    <Link href={`/match/${m.id}`} className="group relative mt-6 block overflow-hidden rounded-3xl bg-navy text-white shadow-xl shadow-navy/20">
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_120%_at_50%_0%,rgba(247,201,72,0.22),transparent_60%)]" />
+      <div className="relative p-5 sm:p-8">
+        <div className="flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gold px-3 py-1 text-[11px] font-extrabold tracking-[0.12em] text-[#060b16] uppercase"><Icon name="target" size={14} />Banker of the day</span>
+          <span className="flex items-center gap-1.5 text-xs text-white/60"><TeamLogo src={m.comp_logo} name={m.comp_name} size={16} />{m.comp_name}</span>
+        </div>
+        <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">
+          <BankerTeam name={m.home_name} logo={m.home_logo} />
+          <div>
+            <div className="font-display text-4xl leading-none font-bold sm:text-5xl"><LocalTime iso={m.kickoff} /></div>
+            <div className="mt-1 text-xs text-white/60"><LocalTime iso={m.kickoff} mode="date" /></div>
+          </div>
+          <BankerTeam name={m.away_name} logo={m.away_logo} />
+        </div>
+        <div className="mx-auto mt-7 grid max-w-lg grid-cols-3 divide-x divide-white/10 rounded-2xl bg-white/[0.06] ring-1 ring-white/10">
+          <BankerStat label="Tip" value={tip.code} sub={tip.label} />
+          <BankerStat label="Fair odds" value={fairOdds(tip.p).toFixed(2)} />
+          <BankerStat label="Confidence" value={pct(tip.p)} />
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function BankerTeam({ name, logo }: { name: string; logo: string | null }) {
+  return (
+    <span className="flex min-w-0 flex-col items-center gap-2.5">
+      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white p-2.5 shadow-lg sm:h-20 sm:w-20"><TeamLogo src={logo} name={name} size={52} /></span>
+      <span className="w-full truncate font-display text-lg font-bold tracking-wide uppercase sm:text-2xl">{name}</span>
+    </span>
+  );
+}
+
+function BankerStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="px-2 py-3 text-center">
+      <div className="text-[10px] font-bold tracking-[0.14em] text-white/50 uppercase">{label}</div>
+      <div className="mt-1 font-display text-2xl leading-none font-bold text-brand-solid sm:text-3xl">{value}</div>
+      {sub && <div className="mt-1 truncate text-[11px] text-white/50">{sub}</div>}
+    </div>
   );
 }

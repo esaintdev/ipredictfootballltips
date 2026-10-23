@@ -52,7 +52,7 @@ export default async function LeaguePage({ params, searchParams }: Props) {
         </div>
         <aside className="min-w-0">
           <section className="s-card mt-6 overflow-hidden p-5">
-            <h2 className="mb-1 text-xl font-extrabold text-fg">League Table</h2>
+            <h2 className="mb-1 font-display text-2xl font-bold tracking-wide text-fg uppercase">League Table</h2>
             <div className="mb-3 flex items-center gap-2 text-xs text-subtle"><TeamLogo src={c.logo} name={c.name} size={14} />{c.name}</div>
             {table.length ? (
               <table className="w-full text-sm">
