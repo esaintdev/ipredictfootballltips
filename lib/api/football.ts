@@ -30,8 +30,9 @@ export async function apiGet<T>(path: string, params: Record<string, string | nu
   const key = apiKey();
   if (!key) throw new ApiFootballError("API-Football key missing. Set API_FOOTBALL_KEY in the environment.");
   const rapid = Boolean(process.env.RAPIDAPI_KEY && !process.env.API_FOOTBALL_KEY);
-  const host = rapid ? "https://api-football-v1.p.rapidapi.com/v3" : (process.env.API_FOOTBALL_HOST ?? "https://v3.football.api-sports.io");
-  const url = new URL(host + path);
+  let host = rapid ? "https://api-football-v1.p.rapidapi.com/v3" : (process.env.API_FOOTBALL_HOST || "https://v3.football.api-sports.io");
+  if (!/^https?:\/\//.test(host)) host = `https://${host}`; // tolerate a bare hostname in API_FOOTBALL_HOST
+  const url = new URL(host.replace(/\/$/, "") + path);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v));
   const headers: Record<string, string> = rapid
     ? { "x-rapidapi-key": key, "x-rapidapi-host": "api-football-v1.p.rapidapi.com" }

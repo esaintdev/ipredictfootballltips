@@ -4,6 +4,7 @@ import { q } from "@/lib/db";
 import { trackRecord, type RecordStats } from "@/lib/queries";
 import { BacktestView } from "@/components/BacktestView";
 import { Stat, pct } from "@/components/ui";
+import { PageHero, QuickTabs } from "@/components/site/blocks";
 import type { BacktestReport } from "@/lib/model/backtest";
 
 export const metadata: Metadata = { title: "Prediction Accuracy & Backtests" };
@@ -17,17 +18,13 @@ export default async function AccuracyPage() {
   const bt = latest[0]?.report ?? off.report;
 
   return (
-    <div className="space-y-12">
-      <div>
-        <h1 className="text-3xl font-black text-white">Accuracy & track record</h1>
-        <p className="mt-1 max-w-3xl text-muted">
-          We publish both our live, graded record and an out-of-sample backtest. In the backtest the model is refitted every week using
-          only matches played <i>before</i> that week, exactly as it works live, so there&apos;s no hindsight.
-        </p>
-      </div>
+    <>
+      <PageHero title="Accuracy & Track Record" intro="Our live, graded record and an out-of-sample backtest. In the backtest the model is refitted every week using only matches played before that week, exactly as it works live, so there's no hindsight." />
+      <QuickTabs />
+      <div className="compat mt-8 space-y-12">
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-white">Live track record</h2>
+        <h2 className="mb-4 text-2xl font-extrabold tracking-tight text-white">Live track record</h2>
         {all.overall.n === 0 ? (
           <div className="card p-6 text-sm text-muted">Live grading starts as soon as the first published predictions are played.</div>
         ) : (
@@ -54,7 +51,7 @@ export default async function AccuracyPage() {
       </section>
 
       <section>
-        <h2 className="mb-1 text-xl font-bold text-white">Backtest: recent seasons</h2>
+        <h2 className="mb-1 text-2xl font-extrabold tracking-tight text-white">Backtest: recent seasons</h2>
         <p className="mb-4 text-sm text-muted">
           {latest[0]
             ? `${latest[0].label} · run ${new Date(latest[0].finished_at).toUTCString()}`
@@ -62,7 +59,8 @@ export default async function AccuracyPage() {
         </p>
         <BacktestView report={bt} />
       </section>
-    </div>
+      </div>
+    </>
   );
 }
 

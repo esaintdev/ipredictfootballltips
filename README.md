@@ -41,6 +41,16 @@ The model is well calibrated (see `/accuracy`). Football is noisy: a typical cei
 
 You can run backtests on your own API-Football data from **Admin → Backtests**: pick a date range, competitions and parameters, then publish a run to the accuracy page or apply its parameters to the live model.
 
+## Public site
+
+Light theme by default, with a dark-mode toggle in the header. Every page uses the same layout: hero banner, quick tabs (Today, Tomorrow, Weekend, Results), top leagues, then a predictions board. The board has date pills, market tabs, and a table with Time, League, Match, Tip, Odds and Confidence columns. Below it come upcoming picks, latest results, league tables and track-record widgets, then an explainer and FAQ.
+
+- **Tip categories** (`lib/tips.ts`): Free Tips, All Predictions, Banker of the Day, 2 Odds accumulator, Double Chance, Over 1.5, Over 2.5, Super Single, BTTS/GG, O/U 3.5, Draws, Home Win, Away Win and Correct Score. They live at URLs like `/double-chance-predictions`. Each category is a filter on the stored model probabilities, so tips are frozen at kick-off along with the prediction. Admin overrides of the 1X2 and O/U 2.5 picks carry through.
+- **Odds** are fair odds (1 / probability, no bookmaker margin).
+- **Day pages:** `/predictions-for-today`, `/predictions-for-tomorrow`, `/predictions-for-the-weekend` and `/monday-predictions` … `/sunday-predictions`.
+- **`/results`** grades every category against final scores. Past dates on any tips page show WON/LOST as well.
+- The old `/predictions?market=…` URLs redirect to the matching category.
+
 ## Setup
 
 ```bash

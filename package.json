@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit",
     "db:migrate": "tsx scripts/migrate.ts",
     "backtest:offline": "tsx scripts/offline-backtest.ts",
-    "test": "tsx --test lib/model/*.test.ts",
+    "test": "tsx --test lib/model/*.test.ts lib/*.test.ts",
     "seed:demo": "tsx scripts/seed-demo.ts"
   },
   "dependencies": {

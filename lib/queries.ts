@@ -51,6 +51,23 @@ export async function predictionsForDay(day: string, compSlug?: string) {
   );
 }
 
+/** Published predictions for a range of UTC days, [from, to] inclusive. */
+export async function predictionsForDays(from: string, to: string) {
+  return q<MatchRow>(
+    `${SELECT} WHERE c.enabled AND p.is_published AND f.kickoff >= ($1::date)::timestamp AT TIME ZONE 'UTC' AND f.kickoff < ($2::date + 1)::timestamp AT TIME ZONE 'UTC'
+     ORDER BY f.kickoff, c.priority`,
+    [from, to],
+  );
+}
+
+/** Most recently graded published predictions (for the "latest results" widget). */
+export async function recentSettled(limit = 6) {
+  return q<MatchRow>(
+    `${SELECT} WHERE c.enabled AND p.is_published AND p.settled_at IS NOT NULL ORDER BY f.kickoff DESC LIMIT $1`,
+    [limit],
+  );
+}
+
 export async function featuredTips(limit = 6) {
   return q<MatchRow>(
     `${SELECT} WHERE c.enabled AND p.is_published AND p.is_featured AND f.kickoff > NOW() - interval '2 hours'
